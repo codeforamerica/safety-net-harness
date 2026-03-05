@@ -1,0 +1,22 @@
+{
+  "name": "safety-net-harness",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Frontend harness packages for the Safety Net Blueprint — form engine, safety harness, and harness designer",
+  "type": "module",
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "storybook": "npm run storybook -w @safety-net/harness-designer",
+    "dev": "npm run dev -w @safety-net/safety-harness",
+    "start": "npm start -w @safety-net/safety-harness",
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "generate": "npm run generate -w @safety-net/harness-designer",
+    "generate:stories": "npm run generate:stories -w @safety-net/harness-designer"
+  }
+}
