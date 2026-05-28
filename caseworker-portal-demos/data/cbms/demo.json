@@ -1,0 +1,10 @@
+{
+  "name": "cbms",
+  "description": "County Benefits Management System caseworker portal demo",
+  "overlays": [
+    {
+      "spec": "intake-openapi.yaml",
+      "overlay": "overlays/intake-overlay.yaml"
+    }
+  ]
+}

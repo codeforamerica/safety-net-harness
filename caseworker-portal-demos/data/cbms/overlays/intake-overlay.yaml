@@ -1,0 +1,64 @@
+overlay: 1.0.0
+info:
+  title: CBMS Demo Overlay
+  version: 1.0.0
+  description: |
+    Extends the baseline intake spec with fields needed for the CBMS caseworker
+    portal demo. These fields are not in the baseline blueprint — they illustrate
+    the kinds of additions a state vendor would apply via overlay.
+
+    Fields added:
+    - primaryApplicantName on ApplicationWritable (denormalized at submission for queue display)
+    - languagePreference on ApplicationWritable (household language preference)
+    - dueDate on Application (read-only, server-set processing deadline)
+    - givenName / familyName on ApplicationMemberWritable (name fields; baseline only has member roles)
+
+actions:
+  # Add display / queue fields to ApplicationWritable so they can be set at
+  # submission time and are returned by GET /intake/applications.
+  - target: $.components.schemas.ApplicationWritable.properties
+    file: intake-openapi.yaml
+    description: Add CBMS-specific fields for queue display and case management
+    update:
+      primaryApplicantName:
+        type: string
+        description: >
+          Denormalized full name of the primary applicant, captured at submission
+          for queue display without requiring a members fetch.
+        example: "Leslie Trent"
+      languagePreference:
+        type: string
+        description: Primary language preference of the household (BCP 47 tag).
+        example: "en"
+
+  # Add computed / server-set fields to Application (read-only)
+  - target: $.components.schemas.Application.allOf.1.properties
+    file: intake-openapi.yaml
+    description: Add CBMS read-only processing fields
+    update:
+      dueDate:
+        type: string
+        format: date
+        readOnly: true
+        nullable: true
+        description: >
+          Regulatory deadline for completing intake review, calculated from
+          submission date based on program rules (e.g., SNAP 30-day clock).
+        example: "2026-06-15"
+
+  # Add name fields to ApplicationMemberWritable so member names can be stored.
+  # The baseline member schema (member.yaml) intentionally omits name fields —
+  # they live on the Person record. These fields are added here for demos and
+  # paper-based intake flows where a Person record may not exist yet.
+  - target: $.components.schemas.ApplicationMemberWritable.allOf.1.properties
+    file: intake-openapi.yaml
+    description: Add given/family name fields to application members
+    update:
+      givenName:
+        type: string
+        description: Member's given (first) name.
+        example: "Leslie"
+      familyName:
+        type: string
+        description: Member's family (last) name.
+        example: "Trent"

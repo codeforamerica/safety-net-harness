@@ -1,0 +1,28 @@
+{
+  "name": "caseworker-portal-demos",
+  "version": "1.0.0",
+  "description": "Caseworker portal demos for the Safety Net Blueprint",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite --port 5174",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "setup": "node run.mjs --demo=cbms",
+    "teardown": "node run.mjs --demo=cbms --teardown"
+  },
+  "dependencies": {
+    "@trussworks/react-uswds": "^10.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.3.3",
+    "vite": "^6.0.0",
+    "@vitejs/plugin-react": "^4.0.0"
+  }
+}

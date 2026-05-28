@@ -1,0 +1,69 @@
+# CBMS Demo — User seed data
+#
+# Ashley Garcia is the default caseworker (ID matches DemoContext.tsx).
+# Snidely Whiplash is the supervisor available for switching in the Demo tray.
+# Leslie Trent is the primary applicant — used by seed.mjs to submit her own
+# application, making the submission step realistically applicant-initiated.
+
+UserExample1:
+  id: a1000001-0000-4000-8000-000000000001
+  userId: a1000001-0000-4000-8000-000000000001
+  idpSubject: demo|ashley-garcia
+  email: ashley.garcia@county.example.gov
+  status: active
+  roles:
+    name: case_worker
+    permissions:
+      - applications:read
+      - applications:update
+      - persons:read
+  ui:
+    name: "Ashley G."
+    availableModules:
+      - cases
+      - tasks
+      - documents
+    canApproveApplications: false
+    canViewSensitivePII: true
+    canManageUsers: false
+  createdAt: "2026-01-01T00:00:00Z"
+  updatedAt: "2026-01-01T00:00:00Z"
+
+UserExample2:
+  id: a2000002-0000-4000-8000-000000000001
+  userId: a2000002-0000-4000-8000-000000000001
+  idpSubject: demo|snidely-whiplash
+  email: snidely.whiplash@county.example.gov
+  status: active
+  roles:
+    name: supervisor
+    permissions:
+      - applications:read
+      - applications:update
+      - applications:approve
+      - persons:read
+      - users:read
+  ui:
+    name: "Snidely Whiplash"
+    availableModules:
+      - cases
+      - tasks
+      - documents
+      - reports
+      - admin
+    canApproveApplications: true
+    canViewSensitivePII: true
+    canManageUsers: true
+  createdAt: "2026-01-01T00:00:00Z"
+  updatedAt: "2026-01-01T00:00:00Z"
+
+UserExample3:
+  id: a3000003-0000-4000-8000-000000000001
+  userId: a3000003-0000-4000-8000-000000000001
+  idpSubject: demo|leslie-trent
+  email: leslie.trent@example.com
+  status: active
+  roles:
+    name: applicant
+  createdAt: "2026-05-01T00:00:00Z"
+  updatedAt: "2026-05-01T00:00:00Z"

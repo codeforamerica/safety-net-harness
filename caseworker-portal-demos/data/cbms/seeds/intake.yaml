@@ -1,0 +1,75 @@
+# CBMS Demo — background queue applications
+#
+# These are queue-filler applications in various states, seeded directly via
+# YAML so they start with pre-set statuses, due dates, and expedited flags.
+#
+# Leslie Trent (the primary demo scenario) is NOT here — she is submitted live
+# via seed.mjs so that her application goes through the real API submission
+# flow (draft → submitted → under_review), creating realistic side data like
+# tasks, verification obligations, and interview records.
+
+ApplicationExample1:
+  id: b2000002-0000-4000-8000-000000000001
+  status: submitted
+  programs:
+    - snap
+  channel: in_person
+  primaryApplicantName: "Marcus Webb"
+  languagePreference: en
+  isExpedited: false
+  dueDate: "2026-06-18"
+  submittedAt: "2026-05-03T10:05:00Z"
+  withdrawnAt: null
+  closedAt: null
+  createdAt: "2026-05-03T09:55:00Z"
+  updatedAt: "2026-05-03T10:05:00Z"
+
+ApplicationExample2:
+  id: b3000003-0000-4000-8000-000000000001
+  status: submitted
+  programs:
+    - medicaid
+  channel: phone
+  primaryApplicantName: "Rosa Delgado"
+  languagePreference: es
+  isExpedited: false
+  dueDate: "2026-06-20"
+  submittedAt: "2026-05-05T16:40:00Z"
+  withdrawnAt: null
+  closedAt: null
+  createdAt: "2026-05-05T16:30:00Z"
+  updatedAt: "2026-05-05T16:40:00Z"
+
+ApplicationExample3:
+  id: b4000004-0000-4000-8000-000000000001
+  status: pending_approval
+  programs:
+    - snap
+    - tanf
+  channel: online
+  primaryApplicantName: "James Okafor"
+  languagePreference: en
+  isExpedited: false
+  dueDate: "2026-05-30"
+  submittedAt: "2026-04-25T11:20:00Z"
+  withdrawnAt: null
+  closedAt: null
+  createdAt: "2026-04-25T11:10:00Z"
+  updatedAt: "2026-05-20T14:00:00Z"
+
+ApplicationExample4:
+  id: b5000005-0000-4000-8000-000000000001
+  status: under_review
+  programs:
+    - snap
+    - medicaid
+  channel: mail
+  primaryApplicantName: "Diana Park"
+  languagePreference: ko
+  isExpedited: false
+  dueDate: "2026-06-10"
+  submittedAt: "2026-05-08T08:00:00Z"
+  withdrawnAt: null
+  closedAt: null
+  createdAt: "2026-05-08T07:50:00Z"
+  updatedAt: "2026-05-10T11:00:00Z"
