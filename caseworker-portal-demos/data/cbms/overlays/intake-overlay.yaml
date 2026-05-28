@@ -10,7 +10,8 @@ info:
     Fields added:
     - primaryApplicantName on ApplicationWritable (denormalized at submission for queue display)
     - languagePreference on ApplicationWritable (household language preference)
-    - dueDate on Application (read-only, server-set processing deadline)
+    - dueDate on Application (read-only, set by state machine on submission)
+    - caseId on Application (read-only, set by CBMS when applicant is matched to a person/case)
     - givenName / familyName on ApplicationMemberWritable (name fields; baseline only has member roles)
 
 actions:
@@ -42,9 +43,17 @@ actions:
         readOnly: true
         nullable: true
         description: >
-          Regulatory deadline for completing intake review, calculated from
-          submission date based on program rules (e.g., SNAP 30-day clock).
+          Regulatory deadline for completing intake review, set by the state machine
+          on submission based on program rules (e.g., SNAP 30-day clock).
         example: "2026-06-15"
+      caseId:
+        type: string
+        readOnly: true
+        nullable: true
+        description: >
+          Vendor-assigned case identifier set by CBMS when the applicant is matched
+          to a person and case record. Blank at submission.
+        example: "CBMS-2026-0042"
 
   # Add name fields to ApplicationMemberWritable so member names can be stored.
   # The baseline member schema (member.yaml) intentionally omits name fields —

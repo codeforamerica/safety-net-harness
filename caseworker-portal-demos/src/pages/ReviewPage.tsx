@@ -4,6 +4,7 @@ import { Tag } from '@trussworks/react-uswds';
 import { useApiData } from '../hooks/useApiData';
 import { apiRequest } from '../api/generic';
 import { DesignGap } from '../components/DesignGap';
+import { BlueprintAddition } from '../components/BlueprintAddition';
 
 const BASE_URL = (import.meta as unknown as { env: { VITE_API_URL?: string } }).env.VITE_API_URL ?? 'http://localhost:1080';
 
@@ -176,9 +177,9 @@ export function ReviewPage() {
             <Link to="/queue" className="usa-breadcrumb__link">Tasks</Link>
           </li>
           <li className="usa-breadcrumb__list-item usa-current" aria-current="page">
-            {application.primaryApplicantName
-              ? `${id?.slice(0, 8).toUpperCase()} — ${application.primaryApplicantName}`
-              : id?.slice(0, 8).toUpperCase()}
+            {application.caseId
+              ? `${application.caseId} — ${application.primaryApplicantName}`
+              : (application.primaryApplicantName ?? id)}
           </li>
         </ol>
       </nav>
@@ -187,10 +188,15 @@ export function ReviewPage() {
       <div className="display-flex flex-align-center column-gap-2 margin-bottom-1">
         <h1 className="margin-0 font-heading-xl">Process a new application</h1>
         <Tag className={taskStatusClass}>{taskStatusLabel}</Tag>
-        {application.isExpedited && <Tag className="bg-red-warm-50v">Expedited</Tag>}
+        {application.isExpedited && (
+          <>
+            <Tag className="bg-red-warm-50v">Expedited</Tag>
+            <BlueprintAddition description="SNAP expedited processing flag — automatically set by the blueprint's eligibility screening when the applicant meets expedited criteria (e.g., income below $150/month). CBMS requires manual flagging." />
+          </>
+        )}
       </div>
       <p className="usa-intro margin-top-05 margin-bottom-4 text-base">
-        Review all sections and verify the applicant's information before making a determination.
+        Walk through each program review, resolve any missing fields or verifications, then run the eligibility determination. The system saves your progress at every step.
       </p>
 
       {/* Metric cards */}
@@ -250,77 +256,79 @@ export function ReviewPage() {
           <h2 className="font-heading-sm margin-0">Application summary</h2>
         </div>
         <div style={{ padding: '1.25rem' }}>
-          <dl className="usa-list usa-list--unstyled grid-row grid-gap-4">
+          <dl className="usa-list usa-list--unstyled" style={{ display: 'table', width: '100%', borderCollapse: 'collapse' }}>
 
-            <div className="grid-col-6 tablet:grid-col-4 margin-bottom-205">
-              <dt className="text-base-dark font-body-xs text-uppercase margin-bottom-05">Applicant</dt>
-              <dd className="margin-0 font-body-md text-bold">
-                {application.primaryApplicantName ?? '—'}
-              </dd>
-            </div>
+            {[
+              {
+                label: 'Applicant',
+                value: <span className="text-bold">{application.primaryApplicantName ?? '—'}</span>,
+              },
+              {
+                label: 'Case ID',
+                badge: <DesignGap description="The blueprint resolves applicants to a Person record via person matching — whether that also creates or links a case record is a design question that needs clarification." />,
+                value: <span className="font-mono-xs text-base">{application.caseId ?? '—'}</span>,
+              },
+              {
+                label: 'Language preference',
+                value: languageLabel,
+              },
+              {
+                label: 'Submitted date',
+                value: formatDate(application.submittedAt),
+              },
+              {
+                label: 'Due date',
+                value: formatDate(application.dueDate),
+              },
+              {
+                label: 'Expedited',
+                badge: <BlueprintAddition description="Automatically set by the blueprint's eligibility screening when the applicant meets SNAP expedited criteria (e.g., income below $150/month or less than $100 in resources)." />,
+                value: application.isExpedited ? 'Yes' : 'Pending',
+              },
+              {
+                label: 'Real-time eligibility',
+                badge: <DesignGap description="Medicaid real-time eligibility is a per-member decision, not per-application. It's unclear whether this belongs at the application summary level or in the household member section." />,
+                value: 'Pending',
+              },
+              {
+                label: 'Modified date',
+                value: formatDate(application.updatedAt),
+              },
+            ].map(({ label, badge, value }) => (
+              <div key={label} style={{ display: 'table-row' }}>
+                <dt
+                  className="text-base font-body-sm"
+                  style={{ display: 'table-cell', padding: '0.35rem 1.5rem 0.35rem 0', whiteSpace: 'nowrap', verticalAlign: 'middle' }}
+                >
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem' }}>
+                    {label}
+                    {badge}
+                  </span>
+                </dt>
+                <dd className="margin-0 font-body-sm" style={{ display: 'table-cell', padding: '0.35rem 0', verticalAlign: 'middle' }}>
+                  {value}
+                </dd>
+              </div>
+            ))}
 
-            <div className="grid-col-6 tablet:grid-col-4 margin-bottom-205">
-              <dt
-                className="text-base-dark font-body-xs text-uppercase margin-bottom-05"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-              >
-                Case ID
-                <DesignGap description="Case ID is a vendor-assigned identifier (e.g. from CBMS). The blueprint tracks applications by application ID only — no case ID concept in the baseline." />
+            <div style={{ display: 'table-row' }}>
+              <dt className="text-base font-body-sm" style={{ display: 'table-cell', padding: '0.35rem 1.5rem 0.35rem 0', whiteSpace: 'nowrap', verticalAlign: 'top', paddingTop: '0.6rem' }}>
+                Programs
               </dt>
-              <dd className="margin-0 font-mono-xs text-base">{id?.slice(0, 8).toUpperCase()}</dd>
-            </div>
-
-            <div className="grid-col-6 tablet:grid-col-4 margin-bottom-205">
-              <dt className="text-base-dark font-body-xs text-uppercase margin-bottom-05">Language preference</dt>
-              <dd className="margin-0">{languageLabel}</dd>
-            </div>
-
-            <div className="grid-col-6 tablet:grid-col-4 margin-bottom-205">
-              <dt className="text-base-dark font-body-xs text-uppercase margin-bottom-05">Submitted</dt>
-              <dd className="margin-0">{formatDate(application.submittedAt)}</dd>
-            </div>
-
-            <div className="grid-col-6 tablet:grid-col-4 margin-bottom-205">
-              <dt
-                className="text-base-dark font-body-xs text-uppercase margin-bottom-05"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-              >
-                Due date
-                <DesignGap description="dueDate is a CBMS overlay field — not in the baseline blueprint application schema." />
-              </dt>
-              <dd className="margin-0">{formatDate(application.dueDate)}</dd>
-            </div>
-
-            <div className="grid-col-6 tablet:grid-col-4 margin-bottom-205">
-              <dt
-                className="text-base-dark font-body-xs text-uppercase margin-bottom-05"
-                style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}
-              >
-                Real-time eligibility
-                <DesignGap description="Blueprint has no real-time eligibility check API. States connect to their own eligibility engines via adapters." />
-              </dt>
-              <dd className="margin-0 text-base">—</dd>
-            </div>
-
-            <div className="grid-col-6 tablet:grid-col-4 margin-bottom-205">
-              <dt className="text-base-dark font-body-xs text-uppercase margin-bottom-05">Last modified</dt>
-              <dd className="margin-0">{formatDate(application.updatedAt)}</dd>
-            </div>
-
-            <div className="grid-col-12 margin-bottom-205">
-              <dt className="text-base-dark font-body-xs text-uppercase margin-bottom-1">Programs</dt>
-              <dd className="margin-0" style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
-                {application.programs.length > 0
-                  ? application.programs.map((p) => (
-                      <Tag
-                        key={p}
-                        className={PROGRAM_COLORS[p.toLowerCase()] ?? ''}
-                        style={{ textTransform: 'uppercase', fontWeight: 700 }}
-                      >
-                        {p.toUpperCase()}
-                      </Tag>
-                    ))
-                  : <span className="text-base">—</span>}
+              <dd className="margin-0" style={{ display: 'table-cell', padding: '0.35rem 0', verticalAlign: 'middle' }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.35rem' }}>
+                  {application.programs.length > 0
+                    ? application.programs.map((p) => (
+                        <Tag
+                          key={p}
+                          className={PROGRAM_COLORS[p.toLowerCase()] ?? ''}
+                          style={{ textTransform: 'uppercase', fontWeight: 700 }}
+                        >
+                          {p.toUpperCase()}
+                        </Tag>
+                      ))
+                    : <span className="text-base">—</span>}
+                </div>
               </dd>
             </div>
 

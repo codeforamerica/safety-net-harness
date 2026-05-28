@@ -1,0 +1,20 @@
+overlay: 1.0.0
+info:
+  title: CBMS Intake State Machine Overlay
+  version: 1.0.0
+  description: |
+    Extends the baseline intake state machine with CBMS-specific behavior.
+
+    - Sets dueDate on the application in response to intake.application.submitted,
+      calculated as 30 days from submission (SNAP standard processing clock).
+
+actions:
+  - target: $.machines[?(@.object=='Application')].events[?(@.type=='intake.application.submitted')].steps
+    file: intake-state-machine.yaml
+    description: Set SNAP 30-day processing deadline when application is submitted
+    append:
+      - call:
+          PATCH: intake/applications/$this.subject
+          body:
+            dueDate: $now+30d
+          description: Set dueDate to 30 days from submission (SNAP standard processing clock)
