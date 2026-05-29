@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useApiData } from '../hooks/useApiData';
 import { apiRequest } from '../api/generic';
 import { DesignGap } from '../components/DesignGap';
@@ -101,6 +101,7 @@ function SectionCard({
   completeness,
   reviewed,
   onToggleReviewed,
+  onEdit,
   badge,
 }: {
   sectionId: string;
@@ -109,6 +110,7 @@ function SectionCard({
   completeness?: Completeness;
   reviewed: boolean;
   onToggleReviewed: () => void;
+  onEdit?: () => void;
   badge?: React.ReactNode;
 }) {
   return (
@@ -152,21 +154,24 @@ function SectionCard({
             />
             Review complete
           </label>
-          <button
-            type="button"
-            style={{
-              border: '1px solid #dfe1e2',
-              borderRadius: '4px',
-              padding: '0.25rem 0.75rem',
-              background: '#fff',
-              cursor: 'pointer',
-              fontSize: '0.875rem',
-              fontWeight: 600,
-              fontFamily: 'inherit',
-            }}
-          >
-            Edit
-          </button>
+          {onEdit && (
+            <button
+              type="button"
+              onClick={onEdit}
+              style={{
+                border: '1px solid #dfe1e2',
+                borderRadius: '4px',
+                padding: '0.25rem 0.75rem',
+                background: '#fff',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                fontWeight: 600,
+                fontFamily: 'inherit',
+              }}
+            >
+              Edit
+            </button>
+          )}
         </div>
       </div>
     </div>
@@ -180,6 +185,7 @@ function SectionCard({
 type SectionProps = {
   reviewed: (section: string, memberId?: string) => boolean;
   onToggle: (section: string, memberId?: string) => void;
+  onEditIncome?: (memberId: string) => void;
 };
 
 function identityCompleteness(m: ReviewContextMember): Completeness {
@@ -244,7 +250,7 @@ function renderContactCard({ reviewed, onToggle }: SectionProps): React.ReactNod
   );
 }
 
-function renderIncomeCards(members: ReviewContextMember[], { reviewed, onToggle }: SectionProps): React.ReactNode {
+function renderIncomeCards(members: ReviewContextMember[], { reviewed, onToggle, onEditIncome }: SectionProps): React.ReactNode {
   return members.map((m) => {
     const summary = m.incomes.length > 0
       ? m.incomes.map((inc) =>
@@ -260,6 +266,7 @@ function renderIncomeCards(members: ReviewContextMember[], { reviewed, onToggle 
         completeness={{ filled: m.incomes.length > 0 ? 1 : 0, total: 1 }}
         reviewed={reviewed('income', m.id)}
         onToggleReviewed={() => onToggle('income', m.id)}
+        onEdit={onEditIncome ? () => onEditIncome(m.id) : undefined}
       />
     );
   });
@@ -416,6 +423,7 @@ function sectionAnchors(sectionIds: string[], members: ReviewContextMember[]): {
 
 export function ProgramReviewPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [activeProgram, setActiveProgram] = useState<string | null>(null);
   const [reviewProgress, setReviewProgress] = useState<ReviewProgressEntry[]>([]);
 
@@ -545,7 +553,11 @@ export function ProgramReviewPage() {
     : DEFAULT_SECTIONS;
   const anchors = sectionAnchors(activeSections, members);
 
-  const sectionProps: SectionProps = { reviewed: isReviewed, onToggle: toggleReviewed };
+  const sectionProps: SectionProps = {
+    reviewed: isReviewed,
+    onToggle: toggleReviewed,
+    onEditIncome: (memberId) => navigate(`/applications/${id}/review/income/${memberId}`),
+  };
 
   // Build a completeness map: anchorId → { filled, total }
   const completenessMap = new Map<string, Completeness>();

@@ -26,6 +26,7 @@ interface Application {
   primaryApplicantName?: string;
   languagePreference?: string;
   dueDate?: string | null;
+  caseId?: string | null;
 }
 
 interface ReviewContext {

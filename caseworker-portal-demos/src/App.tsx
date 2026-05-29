@@ -6,6 +6,7 @@ import { DemoTray } from './components/DemoTray';
 import { QueuePage } from './pages/QueuePage';
 import { OverviewPage } from './pages/OverviewPage';
 import { ProgramReviewPage } from './pages/ProgramReviewPage';
+import { IncomeEditPage } from './pages/IncomeEditPage';
 
 function AppShell() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -61,6 +62,7 @@ function AppShell() {
           <Route path="/queue" element={<QueuePage />} />
           <Route path="/applications/:id" element={<OverviewPage />} />
           <Route path="/applications/:id/review" element={<ProgramReviewPage />} />
+          <Route path="/applications/:id/review/income/:memberId" element={<IncomeEditPage />} />
           <Route path="/" element={<Navigate to="/queue" replace />} />
         </Routes>
       </main>

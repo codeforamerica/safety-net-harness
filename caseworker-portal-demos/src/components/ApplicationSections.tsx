@@ -30,8 +30,11 @@ export interface MemberIncome {
   id: string;
   type: string;
   unearnedType?: string;
+  incomeBasis?: string;
   amount: number;
   frequency: string;
+  startDate?: string;
+  endDate?: string;
 }
 
 export interface MemberExpense {
