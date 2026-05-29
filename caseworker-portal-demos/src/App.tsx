@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { DemoProvider, useDemo } from './context/DemoContext';
 import { DemoTray } from './components/DemoTray';
 import { QueuePage } from './pages/QueuePage';
-import { ReviewPage } from './pages/ReviewPage';
+import { OverviewPage } from './pages/OverviewPage';
+import { ProgramReviewPage } from './pages/ProgramReviewPage';
 
 function AppShell() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
@@ -58,7 +59,8 @@ function AppShell() {
       <main className="grid-container padding-y-4">
         <Routes>
           <Route path="/queue" element={<QueuePage />} />
-          <Route path="/applications/:id" element={<ReviewPage />} />
+          <Route path="/applications/:id" element={<OverviewPage />} />
+          <Route path="/applications/:id/review" element={<ProgramReviewPage />} />
           <Route path="/" element={<Navigate to="/queue" replace />} />
         </Routes>
       </main>

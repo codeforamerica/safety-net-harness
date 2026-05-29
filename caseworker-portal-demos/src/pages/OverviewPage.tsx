@@ -107,7 +107,7 @@ function formatDate(iso: string | null | undefined): string {
 // Main component
 // ---------------------------------------------------------------------------
 
-export function ReviewPage() {
+export function OverviewPage() {
   const { id } = useParams<{ id: string }>();
 
   const contextFetcher = useMemo(
@@ -166,7 +166,50 @@ export function ReviewPage() {
     : '—';
 
   return (
-    <div>
+    <div style={{ display: 'flex', gap: '2rem', alignItems: 'flex-start' }}>
+
+      {/* ── Left nav ─────────────────────────────────────────────────────── */}
+      <nav
+        aria-label="Review workflow"
+        style={{ width: '220px', flexShrink: 0, position: 'sticky', top: '1rem' }}
+      >
+        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.5rem' }}>
+          <li style={{ marginBottom: '0.5rem' }}>
+            <span style={{ fontWeight: 700, fontSize: '0.9rem', color: '#005ea2', borderLeft: '3px solid #005ea2', paddingLeft: '0.5rem', display: 'block' }}>
+              Overview
+            </span>
+          </li>
+          <li style={{ marginBottom: '0.5rem' }}>
+            <span style={{ color: '#71767a', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              Case matching
+              <DesignGap description="Blueprint handles person matching (resolving applicants to Person records) but case-level matching to legacy system case IDs is not yet in scope." />
+            </span>
+          </li>
+          <li style={{ marginBottom: '0.5rem' }}>
+            <Link
+              to={`/applications/${id}/review`}
+              style={{ color: '#1b1b1b', fontSize: '0.9rem', textDecoration: 'none' }}
+            >
+              Program review
+            </Link>
+          </li>
+          <li style={{ marginBottom: '0.5rem' }}>
+            <span style={{ color: '#71767a', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              Eligibility determination
+              <DesignGap description="Eligibility determination rules engine is not yet part of the baseline blueprint." />
+            </span>
+          </li>
+          <li style={{ marginBottom: '0.5rem' }}>
+            <span style={{ color: '#71767a', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+              Authorization
+              <DesignGap description="Authorization and benefit issuance are not yet part of the baseline blueprint." />
+            </span>
+          </li>
+        </ul>
+      </nav>
+
+      {/* ── Main content ─────────────────────────────────────────────────── */}
+      <div style={{ flex: 1, minWidth: 0 }}>
       {/* Breadcrumb */}
       <nav className="usa-breadcrumb margin-bottom-3" aria-label="Breadcrumbs">
         <ol className="usa-breadcrumb__list">
@@ -236,6 +279,7 @@ export function ReviewPage() {
             {verificationsData ? verificationsMissing : '—'}
           </div>
         </div>
+
       </div>
 
       {/* Application summary card */}
@@ -334,6 +378,8 @@ export function ReviewPage() {
 
           </dl>
         </div>
+      </div>
+
       </div>
     </div>
   );
